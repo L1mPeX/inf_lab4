@@ -5,8 +5,7 @@ def parse_json_to_xml(json_string):
     json_dict = eval(json_string)  # Преобразуем JSON-строку в Python словарь через eval()
 
     for key, value in json_dict.items():
-        key = re.sub(r'\s+', '', key)  # Убираем пробелы из имени тега
-
+        key = key.replace(" ", "_").replace("(", "").replace(")", "")
         xml_string += f"<{key}>"
 
         if isinstance(value, dict):  # Если значение является словарем
@@ -14,8 +13,7 @@ def parse_json_to_xml(json_string):
         elif isinstance(value, list):  # Если значение является списком
             xml_string += parse_list_to_xml(value)
         else:
-            value = re.sub(r'\s+', '', str(value))  # Убираем пробелы из значения
-            xml_string += value
+            xml_string += str(value)
 
         xml_string += f"</{key}>"
 
@@ -25,8 +23,7 @@ def parse_dict_to_xml(json_dict):
     xml_string = ""
   
     for key, value in json_dict.items():
-        key = re.sub(r'\s+', '', key)  # Убираем пробелы из имени тега
-
+        key = key.replace(" ", "_").replace("(", "").replace(")", "")
         xml_string += f"<{key}>"
 
         if isinstance(value, dict):
@@ -34,8 +31,7 @@ def parse_dict_to_xml(json_dict):
         elif isinstance(value, list):
             xml_string += parse_list_to_xml(value)
         else:
-            value = re.sub(r'\s+', '', str(value))  # Убираем пробелы из значения
-            xml_string += value
+            xml_string += str(value)
 
         xml_string += f"</{key}>"
 
@@ -50,17 +46,12 @@ def parse_list_to_xml(json_list):
         elif isinstance(item, list):
             xml_string += parse_list_to_xml(item)
         else:
-            item = re.sub(r'\s+', '', str(item))  # Убираем пробелы из значения
-            xml_string += item
+            xml_string += str(item)
 
     return xml_string
 
 # Пример использования
-json_string = '{"name": "John", "age": 30, "hobbies": ["football", "drawing"], "address": {"street": "123 Main St", "city": "New York"}}'
+json_string = ''.join(open("schedulle.json").readlines())
 xml_string = parse_json_to_xml(json_string)
 
-# Убираем пробелы и круглые скобки из тегов XML
-xml_string = re.sub(r'\s+<', '<', xml_string)
-xml_string = re.sub(r'>\s+', '>', xml_string)
-
-print(xml_string)
+print("<?xml version=\"1.0\" encoding=\"UTF-8\"?><root>" + xml_string + "</root>" )
